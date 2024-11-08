@@ -89,20 +89,36 @@ public class Table extends JFrame {
                     int endHour = Integer.parseInt(timeRange[1].split("\\.")[0]);
                     int startMinute = Integer.parseInt(timeRange[0].split("\\.")[1]);
                     int endMinute = Integer.parseInt(timeRange[1].split("\\.")[1]);
-
+                
                     int dayY = getDayYPosition(subject[2]);
-
                     int timeX = getTimeXPosition(startHour, startMinute); // Calculate X for the start time
                     int timeWidth = getTimeXPosition(endHour, endMinute) - timeX; // Calculate width based on end time
-
-                    int timeHeight = rowHeight;
-
-                    // Draw the subject label
+                
+                    // Draw the subject label background
                     g2d.setColor(getColorByDay(subject[2]));
-                    g2d.fillRect(timeX, dayY+10, timeWidth, 80);
+                    g2d.fillRect(timeX, dayY + 10, timeWidth, 80);
                     g2d.setColor(Color.BLACK);
-                    g2d.drawString(subject[0], timeX + 20, dayY + 70); // Subject name
-                    g2d.drawString(subject[1], timeX + 20, dayY +40); // Time
+                
+                    // Set the initial font
+                    Font originalFont = new Font("Arial", Font.PLAIN, 18);
+                    g2d.setFont(originalFont);
+                
+                    // Get FontMetrics to measure text width
+                    FontMetrics metrics = g2d.getFontMetrics();
+                    String subjectName = subject[0];
+                    String timeRangeText = subject[1];
+                
+                    // Calculate the max font size for the subject name to fit within the time slot
+                    int maxFontSize = 15; // Starting font size
+                    while (metrics.stringWidth(subjectName) > timeWidth - 10 && maxFontSize > 10) { // Reduce font size until it fits
+                        maxFontSize--;
+                        g2d.setFont(new Font("Arial", Font.PLAIN, maxFontSize));
+                        metrics = g2d.getFontMetrics();
+                    }
+                
+                    // Draw the subject name and time with adjusted font size
+                    g2d.drawString(subjectName, timeX + 10, dayY + 40); // Adjust Y position as needed
+                    g2d.drawString(timeRangeText, timeX + 10, dayY + 60);
                 }
             }
         };
