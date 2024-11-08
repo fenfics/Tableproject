@@ -65,7 +65,7 @@ public class Table extends JFrame {
 
                 int rowHeight = 50;
                 int columnWidth = 100;
-                int x = 150, y = 55;  
+                int x = 150, y = 55;
 
                 g2d.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -89,36 +89,37 @@ public class Table extends JFrame {
                     int endHour = Integer.parseInt(timeRange[1].split("\\.")[0]);
                     int startMinute = Integer.parseInt(timeRange[0].split("\\.")[1]);
                     int endMinute = Integer.parseInt(timeRange[1].split("\\.")[1]);
-                
+
                     int dayY = getDayYPosition(subject[2]);
                     int timeX = getTimeXPosition(startHour, startMinute); // Calculate X for the start time
                     int timeWidth = getTimeXPosition(endHour, endMinute) - timeX; // Calculate width based on end time
-                
+
                     // Draw the subject label background
                     g2d.setColor(getColorByDay(subject[2]));
-                    g2d.fillRect(timeX+3, dayY + 10, timeWidth, 80);
+                    g2d.fillRect(timeX + 3, dayY + 10, timeWidth, 80);
                     g2d.setColor(Color.BLACK);
-                
+
                     // Set the initial font
                     Font originalFont = new Font("Arial", Font.PLAIN, 18);
                     g2d.setFont(originalFont);
-                
+
                     // Get FontMetrics to measure text width
                     FontMetrics metrics = g2d.getFontMetrics();
                     String subjectName = subject[0];
                     String timeRangeText = subject[1];
-                
+
                     // Calculate the max font size for the subject name to fit within the time slot
-                    int maxFontSize = 15; // Starting font size
-                    while (metrics.stringWidth(subjectName) > timeWidth - 10 && maxFontSize > 10) { // Reduce font size until it fits
+                    int maxFontSize = 8; // Reduced to the minimum
+                    while (metrics.stringWidth(subjectName) > timeWidth - 4 && maxFontSize >= 6) { // Reduce font size
+                                                                                                   // until it fits
                         maxFontSize--;
                         g2d.setFont(new Font("Arial", Font.PLAIN, maxFontSize));
                         metrics = g2d.getFontMetrics();
                     }
-                
+
                     // Draw the subject name and time with adjusted font size
-                    g2d.drawString(subjectName, timeX + 10, dayY + 40); // Adjust Y position as needed
-                    g2d.drawString(timeRangeText, timeX + 10, dayY + 60);
+                    g2d.drawString(subjectName, timeX + 3, dayY + 40); // Adjust Y position as needed
+                    g2d.drawString(timeRangeText, timeX + 3, dayY + 65); // Adjust Y position as needed
                 }
             }
         };
@@ -181,30 +182,37 @@ public class Table extends JFrame {
     private int getTimeXPosition(int hour, int minute) {
         int baseX = 118; // Starting x position for 08.00
         int increment = 97; // Width of one hour block
-    
+
         // Calculate the position based on hour
         int hourPosition = baseX + ((hour - 8) * increment);
-    
+
         // Adjust for half-hour positions
         if (minute == 30) {
             hourPosition += (increment / 2);
         }
-    
+
         return hourPosition;
     }
-    
 
     // Get the Y position of the label based on the day
     private int getDayYPosition(String day) {
         switch (day.toUpperCase()) {
-            case "MON": return 50;
-            case "TUE": return 150;
-            case "WED": return 250;
-            case "THU": return 350;
-            case "FRI": return 450;
-            case "SAT": return 550;
-            case "SUN": return 650;
-            default: return 50;
+            case "MON":
+                return 50;
+            case "TUE":
+                return 150;
+            case "WED":
+                return 250;
+            case "THU":
+                return 350;
+            case "FRI":
+                return 450;
+            case "SAT":
+                return 550;
+            case "SUN":
+                return 650;
+            default:
+                return 50;
         }
     }
 
@@ -231,14 +239,22 @@ public class Table extends JFrame {
 
     private Color getColorByDay(String day) {
         switch (day.toUpperCase()) {
-            case "MON": return Color.decode("#F9E79F");
-            case "TUE": return Color.decode("#FADBD8");
-            case "WED": return Color.decode("#D4EFDF");
-            case "THU": return Color.decode("#EDBB99");
-            case "FRI": return Color.decode("#AED6F1");
-            case "SAT": return Color.decode("#D7BDE2");
-            case "SUN": return Color.decode("#D98880");
-            default: return Color.decode("#FFFFFF");
+            case "MON":
+                return Color.decode("#F9E79F");
+            case "TUE":
+                return Color.decode("#FADBD8");
+            case "WED":
+                return Color.decode("#D4EFDF");
+            case "THU":
+                return Color.decode("#EDBB99");
+            case "FRI":
+                return Color.decode("#AED6F1");
+            case "SAT":
+                return Color.decode("#D7BDE2");
+            case "SUN":
+                return Color.decode("#D98880");
+            default:
+                return Color.decode("#FFFFFF");
         }
     }
 }
