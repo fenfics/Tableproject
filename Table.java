@@ -38,7 +38,7 @@ public class Table extends JFrame {
         input.close();
     }
 
-     public void createTable() {
+    public void createTable() {
         setTitle("Time Table");
         setSize(1400, 800);
         setBackground(Color.decode("#EBF5FB"));
@@ -48,15 +48,14 @@ public class Table extends JFrame {
         JPanel frame = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.decode("#2874A6"));
                 g2d.setStroke(new BasicStroke(3));
                 g2d.drawRect(5, 5, 1375, 750);
                 g2d.drawLine(5, 50, 1380, 50);
                 g2d.drawLine(118, 5, 118, 753);
-                
-                //lineday
+
+                // Lineday
                 g2d.drawLine(5, 150, 1380, 150);
                 g2d.drawLine(5, 250, 1380, 250);
                 g2d.drawLine(5, 350, 1380, 350);
@@ -66,11 +65,11 @@ public class Table extends JFrame {
 
                 int rowHeight = 50;
                 int columnWidth = 100;
-                int x = 150, y = 55 ;
+                int x = 150, y = 55;
 
                 g2d.setFont(new Font("Arial", Font.BOLD, 18));
 
-                //linetimes
+                // Linetimes
                 x = 215;
                 int increment = 97;
 
@@ -81,14 +80,28 @@ public class Table extends JFrame {
 
                 x = 150;
                 y = 55;
+
                 // Draw rows and subjects
                 for (String[] subject : subjects) {
+                    // Parse time and calculate label position
+                    String[] timeRange = subject[1].split("-");
+                    int startHour = Integer.parseInt(timeRange[0].split("\\.")[0]);
+                    int endHour = Integer.parseInt(timeRange[1].split("\\.")[0]);
+                    int startMinute = Integer.parseInt(timeRange[0].split("\\.")[1]);
+                    int endMinute = Integer.parseInt(timeRange[1].split("\\.")[1]);
+
+                    int dayY = getDayYPosition(subject[2]);
+
+                    int timeX = 215 + (startHour - 8) * 100 + startMinute / 60 * 100; // Calculate X for the start time
+                    int timeWidth = (endHour - startHour) * 100 + (endMinute - startMinute) / 60 * 100;
+                    int timeHeight = rowHeight;
+
+                    // Draw the subject label
                     g2d.setColor(getColorByDay(subject[2]));
-                    g2d.fillRect(x, y, columnWidth * 5, rowHeight);
+                    g2d.fillRect(timeX, dayY, timeWidth, timeHeight);
                     g2d.setColor(Color.WHITE);
-                    g2d.drawString(subject[0], x + 5, y + 30);
-                    g2d.drawString(subject[1], x + 5, y + 20);
-                    y += rowHeight;
+                    g2d.drawString(subject[0], timeX + 5, dayY + 30); // Subject name
+                    g2d.drawString(subject[1], timeX + 5, dayY + 20); // Time
                 }
             }
         };
@@ -102,21 +115,21 @@ public class Table extends JFrame {
         JLabel sat = createDayLabel("SAT", "#D7BDE2", 12, 560);
         JLabel sun = createDayLabel("SUN", "#D98880", 12, 660);
 
-        //timelabel
-        JLabel daytime = createTimeLabel("DAY/TIME",10,7);
-        JLabel eight = createTimeLabel("08.00",120,7);
-        JLabel nine = createTimeLabel("09.00",210,7);
-        JLabel ten = createTimeLabel("10.00",310,7);
-        JLabel eleven = createTimeLabel("11.00",410,7);
-        JLabel twelve = createTimeLabel("12.00",500,7);
-        JLabel thirteen = createTimeLabel("13.00",600,7);
-        JLabel fourteen = createTimeLabel("14.00",700,7);
-        JLabel fifteen = createTimeLabel("15.00",795,7);
-        JLabel sixteen = createTimeLabel("16.00",890,7);
-        JLabel seventeen = createTimeLabel("17.00",990,7);
-        JLabel eighteen = createTimeLabel("18.00",1085,7);
-        JLabel nineteen = createTimeLabel("19.00",1185,7);
-        JLabel twenty = createTimeLabel("20.00",1285,7);
+        // Time labels
+        JLabel daytime = createTimeLabel("DAY/TIME", 10, 7);
+        JLabel eight = createTimeLabel("08.00", 120, 7);
+        JLabel nine = createTimeLabel("09.00", 210, 7);
+        JLabel ten = createTimeLabel("10.00", 310, 7);
+        JLabel eleven = createTimeLabel("11.00", 410, 7);
+        JLabel twelve = createTimeLabel("12.00", 500, 7);
+        JLabel thirteen = createTimeLabel("13.00", 600, 7);
+        JLabel fourteen = createTimeLabel("14.00", 700, 7);
+        JLabel fifteen = createTimeLabel("15.00", 795, 7);
+        JLabel sixteen = createTimeLabel("16.00", 890, 7);
+        JLabel seventeen = createTimeLabel("17.00", 990, 7);
+        JLabel eighteen = createTimeLabel("18.00", 1085, 7);
+        JLabel nineteen = createTimeLabel("19.00", 1185, 7);
+        JLabel twenty = createTimeLabel("20.00", 1285, 7);
 
         frame.add(daytime);
         frame.add(eight);
@@ -133,7 +146,7 @@ public class Table extends JFrame {
         frame.add(nineteen);
         frame.add(twenty);
 
-        // Add labels to the frame
+        // Add day labels to the frame
         frame.add(mon);
         frame.add(tue);
         frame.add(wed);
@@ -148,7 +161,19 @@ public class Table extends JFrame {
         setVisible(true);
     }
 
-    
+    // Get the Y position of the label based on the day
+    private int getDayYPosition(String day) {
+        switch (day.toUpperCase()) {
+            case "MON": return 150;
+            case "TUE": return 250;
+            case "WED": return 350;
+            case "THU": return 450;
+            case "FRI": return 550;
+            case "SAT": return 650;
+            case "SUN": return 750;
+            default: return 150;
+        }
+    }
 
     private JLabel createDayLabel(String day, String colorHex, int x, int y) {
         JLabel label = new JLabel(day);
@@ -171,26 +196,16 @@ public class Table extends JFrame {
         return label;
     }
 
-    
-
     private Color getColorByDay(String day) {
         switch (day.toUpperCase()) {
-            case "MON":
-                return Color.decode("#F9E79F");
-            case "TUE":
-                return Color.decode("#FADBD8");
-            case "WED":
-                return Color.decode("#D4EFDF");
-            case "THU":
-                return Color.decode("#EDBB99");
-            case "FRI":
-                return Color.decode("#AED6F1");
-            case "SAT":
-                return Color.decode("#D7BDE2");
-            case "SUN":
-                return Color.decode("#D98880");
-            default:
-                return Color.decode("#A6ACAF");
+            case "MON": return Color.decode("#F9E79F");
+            case "TUE": return Color.decode("#FADBD8");
+            case "WED": return Color.decode("#D4EFDF");
+            case "THU": return Color.decode("#EDBB99");
+            case "FRI": return Color.decode("#AED6F1");
+            case "SAT": return Color.decode("#D7BDE2");
+            case "SUN": return Color.decode("#D98880");
+            default: return Color.decode("#FFFFFF");
         }
     }
 }
