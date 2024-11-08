@@ -96,7 +96,7 @@ public class Table extends JFrame {
                 
                     // Draw the subject label background
                     g2d.setColor(getColorByDay(subject[2]));
-                    g2d.fillRect(timeX, dayY + 10, timeWidth, 80);
+                    g2d.fillRect(timeX+3, dayY + 10, timeWidth, 80);
                     g2d.setColor(Color.BLACK);
                 
                     // Set the initial font
@@ -197,14 +197,14 @@ public class Table extends JFrame {
     // Get the Y position of the label based on the day
     private int getDayYPosition(String day) {
         switch (day.toUpperCase()) {
-            case "MON": return 150;
-            case "TUE": return 250;
-            case "WED": return 350;
-            case "THU": return 450;
-            case "FRI": return 550;
-            case "SAT": return 650;
-            case "SUN": return 750;
-            default: return 150;
+            case "MON": return 50;
+            case "TUE": return 160;
+            case "WED": return 260;
+            case "THU": return 360;
+            case "FRI": return 460;
+            case "SAT": return 560;
+            case "SUN": return 660;
+            default: return 50;
         }
     }
 
