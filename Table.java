@@ -65,7 +65,7 @@ public class Table extends JFrame {
 
                 int rowHeight = 50;
                 int columnWidth = 100;
-                int x = 150, y = 55;
+                int x = 150, y = 55;  
 
                 g2d.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -92,16 +92,17 @@ public class Table extends JFrame {
 
                     int dayY = getDayYPosition(subject[2]);
 
-                    int timeX = 215 + (startHour - 8) * 100 + startMinute / 60 * 100; // Calculate X for the start time
-                    int timeWidth = (endHour - startHour) * 100 + (endMinute - startMinute) / 60 * 100;
+                    int timeX = getTimeXPosition(startHour, startMinute); // Calculate X for the start time
+                    int timeWidth = getTimeXPosition(endHour, endMinute) - timeX; // Calculate width based on end time
+
                     int timeHeight = rowHeight;
 
                     // Draw the subject label
                     g2d.setColor(getColorByDay(subject[2]));
-                    g2d.fillRect(timeX, dayY, timeWidth, timeHeight);
-                    g2d.setColor(Color.WHITE);
-                    g2d.drawString(subject[0], timeX + 5, dayY + 30); // Subject name
-                    g2d.drawString(subject[1], timeX + 5, dayY + 20); // Time
+                    g2d.fillRect(timeX, dayY+10, timeWidth, 80);
+                    g2d.setColor(Color.BLACK);
+                    g2d.drawString(subject[0], timeX + 20, dayY + 70); // Subject name
+                    g2d.drawString(subject[1], timeX + 20, dayY +40); // Time
                 }
             }
         };
@@ -160,6 +161,22 @@ public class Table extends JFrame {
         this.add(frame);
         setVisible(true);
     }
+
+    private int getTimeXPosition(int hour, int minute) {
+        int baseX = 118; // Starting x position for 08.00
+        int increment = 97; // Width of one hour block
+    
+        // Calculate the position based on hour
+        int hourPosition = baseX + ((hour - 8) * increment);
+    
+        // Adjust for half-hour positions
+        if (minute == 30) {
+            hourPosition += (increment / 2);
+        }
+    
+        return hourPosition;
+    }
+    
 
     // Get the Y position of the label based on the day
     private int getDayYPosition(String day) {
