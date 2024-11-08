@@ -198,12 +198,12 @@ public class Table extends JFrame {
     private int getDayYPosition(String day) {
         switch (day.toUpperCase()) {
             case "MON": return 50;
-            case "TUE": return 160;
-            case "WED": return 260;
-            case "THU": return 360;
-            case "FRI": return 460;
-            case "SAT": return 560;
-            case "SUN": return 660;
+            case "TUE": return 150;
+            case "WED": return 250;
+            case "THU": return 350;
+            case "FRI": return 450;
+            case "SAT": return 550;
+            case "SUN": return 650;
             default: return 50;
         }
     }
