@@ -10,6 +10,45 @@ public class Table extends JFrame {
         t1.run();
     }
 
+    private static class TimeSlot {
+        int startHour, startMinute, endHour, endMinute;
+
+        TimeSlot(String timeRange) {
+            String[] times = timeRange.split("-");
+            String[] start = times[0].split("\\.");
+            String[] end = times[1].split("\\.");
+
+            startHour = Integer.parseInt(start[0]);
+            startMinute = Integer.parseInt(start[1]);
+            endHour = Integer.parseInt(end[0]);
+            endMinute = Integer.parseInt(end[1]);
+        }
+
+        boolean overlaps(TimeSlot other) {
+            int thisStart = startHour * 60 + startMinute;
+            int thisEnd = endHour * 60 + endMinute;
+            int otherStart = other.startHour * 60 + other.startMinute;
+            int otherEnd = other.endHour * 60 + other.endMinute;
+
+            return (thisStart < otherEnd && thisEnd > otherStart);
+        }
+    }
+
+
+    private boolean hasTimeConflict(String day, String timeRange) {
+        TimeSlot newSlot = new TimeSlot(timeRange);
+
+        for (String[] subject : subjects) {
+            if (subject[2].equalsIgnoreCase(day)) {
+                TimeSlot existingSlot = new TimeSlot(subject[1]);
+                if (newSlot.overlaps(existingSlot)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void run() {
         boolean ready = true;
         Scanner input = new Scanner(System.in);
@@ -23,6 +62,24 @@ public class Table extends JFrame {
 
             System.out.print("Day(ex.mon): ");
             String day = input.nextLine();
+
+            // Check for time conflicts before adding
+            if (hasTimeConflict(day, time)) {
+                System.out.println(
+                        "⚠️ Warning: Time conflict detected! This time slot overlaps with an existing subject on "
+                                + day.toUpperCase());
+                System.out.print("Do you still want to add this subject? (y/n): ");
+                String addAnyway = input.nextLine();
+
+                if (!addAnyway.equalsIgnoreCase("y")) {
+                    System.out.print("More subjects? (y/n): ");
+                    String check = input.nextLine();
+                    if (check.equalsIgnoreCase("n")) {
+                        ready = false;
+                    }
+                    continue;
+                }
+            }
 
             subjects.add(new String[] { subject, time, day });
 
@@ -63,9 +120,8 @@ public class Table extends JFrame {
                 g2d.drawLine(5, 550, 1380, 550);
                 g2d.drawLine(5, 650, 1380, 650);
 
-                int rowHeight = 50;
-                int columnWidth = 100;
-                int x = 150, y = 55;
+                
+                int x = 150;
 
                 g2d.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -79,7 +135,7 @@ public class Table extends JFrame {
                 }
 
                 x = 150;
-                y = 55;
+              
 
                 // Draw rows and subjects
                 for (String[] subject : subjects) {
