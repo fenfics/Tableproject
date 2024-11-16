@@ -1,11 +1,19 @@
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import javax.swing.*;
 
 public class Table extends JFrame {
     private ArrayList<String[]> subjects = new ArrayList<>();
+    private static final String FILE_PATH = "timetable_data/";
 
     public static void main(String[] args) {
+        // Create directory if it doesn't exist
+        new File(FILE_PATH).mkdirs();
         Table t1 = new Table();
         t1.run();
     }
@@ -49,10 +57,69 @@ public class Table extends JFrame {
         return false;
     }
 
+     private void saveToFile(int setNumber) {
+        try {
+            String fileName = FILE_PATH + "set" + setNumber + ".txt";
+            PrintWriter writer = new PrintWriter(new FileWriter(fileName));
+            for (String[] subject : subjects) {
+                writer.println(String.join(",", subject));
+            }
+            writer.close();
+            System.out.println("Data saved successfully to set " + setNumber);
+        } catch (IOException e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    private void loadFromFile(String fileName) {
+        try {
+            File file = new File(FILE_PATH + fileName);
+            Scanner fileScanner = new Scanner(file);
+            subjects.clear(); // Clear existing data
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                subjects.add(line.split(","));
+            }
+            fileScanner.close();
+            System.out.println("Data loaded successfully from " + fileName);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
+        }
+    }
+
+    private void listSavedFiles() {
+        File folder = new File(FILE_PATH);
+        File[] files = folder.listFiles((dir, name) -> name.startsWith("set") && name.endsWith(".txt"));
+        if (files != null && files.length > 0) {
+            System.out.println("Available saved sets:");
+            for (File file : files) {
+                System.out.println(file.getName());
+            }
+        } else {
+            System.out.println("No saved sets found.");
+        }
+    }
+
     public void run() {
-        boolean ready = true;
         Scanner input = new Scanner(System.in);
 
+        System.out.print("Want to run from history? (y/n) ");
+        String useHistory = input.nextLine().toLowerCase();
+
+        if (useHistory.equals("y")) {
+            listSavedFiles();
+            System.out.print("Enter file name (e.g., set1.txt): ");
+            String fileName = input.nextLine();
+            loadFromFile(fileName);
+            createTable();
+            input.close();
+            return;
+        }
+
+        System.out.println("Enter set number for this data: ");
+        int setNumber = Integer.parseInt(input.nextLine());
+
+        boolean ready = true;
         while (ready) {
             System.out.print("Subject: ");
             String subject = input.nextLine();
@@ -63,11 +130,10 @@ public class Table extends JFrame {
             System.out.print("Day(ex.mon): ");
             String day = input.nextLine();
 
-            // Check for time conflicts before adding
             if (hasTimeConflict(day, time)) {
                 System.out.println(
-                        "⚠️ Warning: Time conflict detected! This time slot overlaps with an existing subject on "
-                                + day.toUpperCase());
+                    "⚠️ Warning: Time conflict detected! This time slot overlaps with an existing subject on "
+                    + day.toUpperCase());
                 System.out.print("Do you still want to add this subject? (y/n): ");
                 String addAnyway = input.nextLine();
 
@@ -91,6 +157,8 @@ public class Table extends JFrame {
             }
         }
 
+        // Save data to file
+        saveToFile(setNumber);
         createTable();
         input.close();
     }
